@@ -14,16 +14,16 @@ struct ReadyQueue {
     QueueNode* rear;
 };
 
-void initializeQueue(ReadyQueue& q) {
+inline void initializeQueue(ReadyQueue& q) {
     q.front = nullptr;
     q.rear = nullptr;
 }
 
-bool isEmpty(const ReadyQueue& q) {
+inline bool isEmpty(const ReadyQueue& q) {
     return q.front == nullptr;
 }
 
-void enqueue(ReadyQueue& q, PCB* process) {
+inline void enqueue(ReadyQueue& q, PCB* process) {
     QueueNode* newNode = new QueueNode;
     newNode->process = process;
     newNode->next = nullptr;
@@ -37,14 +37,13 @@ void enqueue(ReadyQueue& q, PCB* process) {
     }
 }
 
-PCB* dequeue(ReadyQueue& q) {
+inline PCB* dequeue(ReadyQueue& q) {
     if (isEmpty(q)) {
         return nullptr;
     }
 
     QueueNode* temp = q.front;
     PCB* process = temp->process;
-
     q.front = q.front->next;
 
     if (q.front == nullptr) {
@@ -55,19 +54,9 @@ PCB* dequeue(ReadyQueue& q) {
     return process;
 }
 
-void printQueue(const ReadyQueue& q) {
-    QueueNode* current = q.front;
-
-    while (current != nullptr) {
-        PCB* p = current->process;
-        std::cout << "PID=" << p->pid
-                  << " Arr=" << p->arrival
-                  << " Burst=" << p->burst
-                  << " Rem=" << p->remaining
-                  << " Prio=" << p->priority
-                  << std::endl;
-
-        current = current->next;
+inline void clearQueue(ReadyQueue& q) {
+    while (!isEmpty(q)) {
+        dequeue(q);
     }
 }
 
