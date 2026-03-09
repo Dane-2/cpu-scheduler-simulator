@@ -1,0 +1,6 @@
+I used AI for the following in this project: 
+
+1. Outlined the project and helped me start the order in which to do this project. 
+2. Helped me with file structure
+3. Git commands and compiling.
+4. As well as explaining errors and debugging. 
