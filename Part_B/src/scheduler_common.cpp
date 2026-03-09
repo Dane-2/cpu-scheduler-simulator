@@ -103,3 +103,62 @@ bool allProcessesFinished(PCB processes[], int count) {
     }
     return true;
 }
+
+void admitNewArrivalsNoQueue(PCB processes[], int count, int currentTime) {
+    for (int i = 0; i < count; i++) {
+        if (processes[i].state == NEW && processes[i].arrival == currentTime) {
+            processes[i].state = READY;
+        }
+    }
+}
+
+void printReadyProcessesFromArray(std::ofstream& out, PCB processes[], int count) {
+    for (int i = 0; i < count; i++) {
+        if (processes[i].state == READY) {
+            out << "PID = " << processes[i].pid
+                << " Arr =" << processes[i].arrival
+                << " Burst =" << processes[i].burst
+                << " Rem =" << processes[i].remaining
+                << " Prio =" << processes[i].priority
+                << " State = READY" << std::endl;
+        }
+    }
+}
+
+void printSystemStateFromArray(std::ofstream& out, int time, PCB* running, PCB processes[], int count) {
+    out << "Time " << time << ":" << std::endl;
+    printRunningProcess(out, running);
+    out << "READY :" << std::endl;
+    printReadyProcessesFromArray(out, processes, count);
+    out << std::endl;
+}
+
+
+void recordGantt(std::string gantt[], int& index, PCB* running) {
+
+    if (running == nullptr) {
+        gantt[index] = "IDLE";
+    } else {
+        gantt[index] = running->pid;
+    }
+
+    index++;
+}
+
+void printGanttChart(std::ofstream& out, std::string gantt[], int length) {
+
+    out << "\nGantt Chart:\n";
+
+    // print times
+    for (int i = 0; i <= length; i++) {
+        out << i << " ";
+    }
+
+    out << "\n";
+
+    for (int i = 0; i < length; i++) {
+        out << "| " << gantt[i] << " ";
+    }
+
+    out << "|\n";
+}

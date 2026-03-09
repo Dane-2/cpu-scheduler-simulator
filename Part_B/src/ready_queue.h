@@ -4,6 +4,10 @@
 #include <iostream>
 #include "pcb.h"
 
+void admitNewArrivalsNoQueue(PCB processes[], int count, int currentTime);
+void printReadyProcessesFromArray(std::ofstream& out, PCB processes[], int count);
+void printSystemStateFromArray(std::ofstream& out, int time, PCB* running, PCB processes[], int count);
+
 struct QueueNode {
     PCB* process;
     QueueNode* next;
@@ -59,5 +63,6 @@ inline void clearQueue(ReadyQueue& q) {
         dequeue(q);
     }
 }
+
 
 #endif

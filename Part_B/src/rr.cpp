@@ -1,10 +1,9 @@
-#include "fcfs.h"
+#include "rr.h"
 #include "scheduler_common.h"
 #include <fstream>
 #include <string>
 
-void simulateFCFS(PCB processes[], int count, const char* outputFile) {
-
+void simulateRR(PCB processes[], int count, int quantum, const char* outputFile) {
     std::ofstream out(outputFile);
 
     ReadyQueue readyQueue;
@@ -12,70 +11,71 @@ void simulateFCFS(PCB processes[], int count, const char* outputFile) {
 
     PCB* running = nullptr;
     int currentTime = 0;
+    int timeSliceUsed = 0;
 
-    // Gantt chart storage
     std::string gantt[100];
     int ganttIndex = 0;
 
-    out << "FCFS Scheduling Trace\n\n";
+    out << "Round Robin Scheduling Trace\n\n";
+    out << "Quantum = " << quantum << "\n\n";
 
     while (!allProcessesFinished(processes, count)) {
-
-        // Admit new arrivals
         admitNewArrivals(processes, count, currentTime, readyQueue);
 
-        // Dispatch process if CPU idle
         if (running == nullptr && !isEmpty(readyQueue)) {
-
             running = dequeue(readyQueue);
             running->state = RUNNING;
+            timeSliceUsed = 0;
 
             if (running->start_time == -1) {
                 running->start_time = currentTime;
             }
         }
 
-        // Execute process
         if (running != nullptr) {
-
             running->remaining--;
+            timeSliceUsed++;
 
             if (running->remaining == 0) {
                 running->completion_time = currentTime + 1;
             }
         }
 
-        // Record Gantt chart
-        if (running == nullptr)
+        if (running == nullptr) {
             gantt[ganttIndex] = "IDLE";
-        else
+        } else {
             gantt[ganttIndex] = running->pid;
-
+        }
         ganttIndex++;
 
-        // Print system state
         printSystemState(out, currentTime, running, readyQueue);
 
-        // Terminate if finished
         if (running != nullptr && running->remaining == 0) {
-
             running->state = TERMINATED;
             running = nullptr;
+            timeSliceUsed = 0;
+        }
+        else if (running != nullptr && timeSliceUsed == quantum) {
+            running->state = READY;
+            enqueue(readyQueue, running);
+            running = nullptr;
+            timeSliceUsed = 0;
         }
 
         currentTime++;
     }
 
-    // Print Gantt Chart
     out << "\nGantt Chart:\n";
 
-    for (int i = 0; i <= ganttIndex; i++)
+    for (int i = 0; i <= ganttIndex; i++) {
         out << i << " ";
+    }
 
     out << "\n";
 
-    for (int i = 0; i < ganttIndex; i++)
+    for (int i = 0; i < ganttIndex; i++) {
         out << "| " << gantt[i] << " ";
+    }
 
     out << "|\n";
 

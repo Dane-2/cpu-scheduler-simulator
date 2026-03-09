@@ -19,4 +19,9 @@ void printSystemState(std::ofstream& out, int time, PCB* running, const ReadyQue
 void admitNewArrivals(PCB processes[], int count, int currentTime, ReadyQueue& readyQueue);
 bool allProcessesFinished(PCB processes[], int count);
 
+// needed for Priority / SRTF
+void admitNewArrivalsNoQueue(PCB processes[], int count, int currentTime);
+void printReadyProcessesFromArray(std::ofstream& out, PCB processes[], int count);
+void printSystemStateFromArray(std::ofstream& out, int time, PCB* running, PCB processes[], int count);
+
 #endif
